@@ -14,5 +14,5 @@ type Transaction struct {
 	Tanggal     time.Time
 
 	// Relasi
-	Item Item `gorm:"foreignKey:ItemID"`
+	Item Item `gorm:"foreignKey:ItemID" json:"item"`
 }

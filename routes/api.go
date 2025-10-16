@@ -1,34 +1,48 @@
 package routes
 
 import (
+	"goravel/app/http/controllers"
+
 	"github.com/goravel/framework/facades"
-	"pos-api/app/http/controllers"
 )
 
 func Api() {
-	// Transaction routes
-	facades.Route().Get("/", controllers.TransactionController{}.ChartPendapatanBulanan)
+	itemController := controllers.NewItemController()
 
-	// Item routes
-	facades.Route().Get("/items/search", controllers.ItemController{}.Search)
-	facades.Route().Resource("items", controllers.ItemController{})
-	facades.Route().Patch("/items/:id/update-stok", controllers.ItemController{}.UpdateStok)
+	// CRUD Routes Items
+	facades.Route().Get("/items", itemController.Index)           // List semua item
+	facades.Route().Post("/items", itemController.Store)          // Tambah item baru
+	facades.Route().Get("/items/{id}", itemController.Show)       // Detail item
+	facades.Route().Put("/items/{id}", itemController.Update)     // Update item
+	facades.Route().Delete("/items/{id}", itemController.Destroy) // Hapus item
 
-	// Checkout routes
-	facades.Route().Get("/items/:id/checkout", controllers.TransactionController{}.CheckoutForm)
-	facades.Route().Post("/items/:id/checkout", controllers.TransactionController{}.ProcessCheckout)
+	// Custom Routes
+	facades.Route().Get("/items/search", itemController.Search) // Cari item
 
-	// History
-	facades.Route().Get("/history", controllers.HistoryController{}.Index)
+	// Controller transaksi
+	transactionController := controllers.NewTransactionController()
 
-	// Nota
-	facades.Route().Get("/nota/:id/cetak", controllers.TransactionController{}.CetakNota)
+	// Checkout transaksi (POST /transactions/checkout/:id)
+	facades.Route().Post("/transactions/checkout/{id}", transactionController.ProcessCheckout)
 
-	// Cart routes
-	facades.Route().Get("/cart", controllers.CartController{}.Index)
-	facades.Route().Post("/cart/add/:id", controllers.CartController{}.Add)
-	facades.Route().Post("/cart/remove/:id", controllers.CartController{}.Remove)
-	facades.Route().Post("/cart/checkout", controllers.CartController{}.Checkout)
-	facades.Route().Get("/cart/nota/:id", controllers.CartController{}.PrintNota)
-	facades.Route().Put("/cart/update-harga/:id", controllers.CartController{}.UpdateHarga)
+	// Chart pendapatan bulanan (GET /transactions/chart)
+	facades.Route().Get("/transactions/chart", transactionController.ChartPendapatanBulanan)
+
+	// List semua transaksi (GET /transactions)
+	facades.Route().Get("/transactions", transactionController.GetAll)
+
+
+	// Detail transaksi (GET /transactions/:id)
+	facades.Route().Get("/transactions/{id}", transactionController.GetByID)
+
+	// Controller cart
+	cartController := controllers.NewCartController()
+
+	// Cart Routes
+	facades.Route().Get("/cart", cartController.Index)                     // List semua item di cart
+	facades.Route().Post("/cart/add/{id}", cartController.Add)             // Tambah item ke cart
+	facades.Route().Delete("/cart/remove/{id}", cartController.Remove)     // Hapus item dari cart
+	facades.Route().Patch("/cart/update-harga/{id}", cartController.UpdateHarga) // Update harga item
+	facades.Route().Post("/cart/checkout", cartController.Checkout)        // Checkout cart
 }
+

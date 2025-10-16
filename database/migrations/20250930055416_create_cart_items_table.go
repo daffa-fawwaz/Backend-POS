@@ -15,7 +15,7 @@ func (m *M20250930092000CreateCartItemsTable) Up() error {
 	return facades.Schema().Create("cart_items", func(table schema.Blueprint) {
 		table.ID()
 		table.UnsignedBigInteger("item_id")
-		table.Integer("harga_manual").Nullable()
+		table.Double("harga_manual").Nullable()
 		table.Integer("quantity").Default(1)
 		table.Timestamps()
 	})
